@@ -1,0 +1,106 @@
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Loading CSV Data with D3</title>
+    <style>
+        body{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+h1{
+    color: #0099FF;
+    text-align: center;
+    width:50%;
+}
+p{
+    color: #000000;
+    text-align: center;
+    width: 50%;
+}
+th{
+    color:#ffffff;
+    padding: 4px;
+    background-color: #FFB900;
+
+}
+td{
+    background-color: #ffffff;
+    border: 1px solid #FFB900;
+    padding: 6px;
+
+}
+table{
+    color: #000000;
+    border: 1px solid #FFB900;
+    border-collapse: collapse;
+    padding: 6px;
+    width: 50%;
+}
+    </style>
+</head>
+<body>
+<h1>Top 10 Athletes</h1>
+<p>This table shows the top 10 athelets that get the most medals. </p>
+
+<div id="table"></div>
+
+</body>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+
+<!-- load the function file you need before you call it... -->
+<script type="text/javascript" src="tabulate.js"></script>
+
+<script type="text/javascript">
+    //Load in contents of CSV file, and do things to the data.
+    d3.csv("table_fake_data.csv", function(error, myData) {
+        if (error) {
+            console.log("Had an error loading file.");
+        }
+        // We'll be using simpler data as values, not objects.
+        var myArray = [];
+        myData.forEach(function(d, i){
+            // now we add another data object value, a calculated value.
+            // here we are making strings into numbers using type coercion
+            d.rank = +d.rank
+            d.medals = +d.medals;
+            // Add a new array with the values of each:
+            myArray.push([d.rank, d.name, d.sex, d.team, d.sport, d.medals]);
+        });
+        console.log(myData);
+        console.log(myArray);
+        //sort data by difference
+        myArray.sort(function (a, b) {
+            return a[3]-b[3];
+        });
+        // You could also have made the new array with a map function!
+        //using colors and fonts from the UNICEF Style Guide
+        var table = d3.select("#table").append("table");
+        var header = table.append("thead").append("tr");
+        header
+                .selectAll("th")
+                .data(["Rank","Name", "Sex", "Team", "Sport", "Medals"])
+                .enter()
+                .append("th")
+                .text(function(d) { return d; });
+        var tablebody = table.append("tbody");
+        rows = tablebody
+                .selectAll("tr")
+                .data(myArray)
+                .enter()
+                .append("tr");
+        // We built the rows using the nested array - now each row has its own array.
+        cells = rows.selectAll("td")
+            // each row has data associated; we get it and enter it for the cells.
+                .data(function(d) {
+                    console.log(d);
+                    return d;
+                })
+                .enter()
+                .append("td")
+                .text(function(d) {
+                    return d;
+                });
+    });
+</script>
+
+</html>

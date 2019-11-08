@@ -1,0 +1,19 @@
+.feature {
+  fill: none;
+  stroke: white;
+  stroke-width: 1px;
+  stroke-linejoin: round;
+}
+.mesh {
+  fill: none;
+  stroke: white;
+  stroke-width: 0.5px;
+  stroke-linejoin: round;
+}
+h1 {
+  font-family: sans-serif;
+}
+
+.pin:hover {
+  fill: lightsalmon;
+}

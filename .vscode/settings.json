@@ -1,3 +1,4 @@
 {
-    "eslint.enable": false
+    "eslint.enable": false,
+    "python.pythonPath": "C:\\Users\\huyih\\AppData\\Local\\Programs\\Python\\Python36\\python.exe"
 }
