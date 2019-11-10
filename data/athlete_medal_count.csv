@@ -1,4 +1,4 @@
-Name,Year,Sex,Sport,NOC,Medal
+name,year,sex,sport,team,medals
 Ioannis Mitropoulos,1896,M,Gymnastics,GRE,1
 Carl Schuhmann,1896,M,Gymnastics,GER,3
 Ioannis Frangoudis,1896,M,Shooting,GRE,3

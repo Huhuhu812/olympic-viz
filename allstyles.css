@@ -25,11 +25,12 @@ td {
   border: 1px solid #ffb900;
   padding: 6px;
 }
+
 #column1 {
   display: inline-block;
+  width: 65%;
 }
 #column2 {
-  display: inline-block;
   float: right;
   width: 30%;
   text-align: center;
@@ -43,9 +44,8 @@ table {
 }
 
 #map {
-  width: 100%;
-  position: relative;
-  padding-left: 7em;
+  margin-top: 5vh;
+  margin-left: 5vw;
 }
 
 #title {
@@ -66,33 +66,47 @@ table {
 
 #rings {
   display: block;
+  margin-top: 3vh;
   margin-left: auto;
   margin-right: auto;
   width: 10%;
 }
 
 #cal {
-  width: 60%;
-  height: 21%;
+  display: inline;
+  background-color: bisque;
+}
+
+.row1 {
+  display: block;
+  /* margin-left: vw; */
+  text-align: center;
 }
 
 /* calendar thingy */
 .calcontainer {
+  display: inline;
   position: relative;
-  text-align: center;
+  margin: 6vw;
   color: black;
-  float: right;
-  width: 25%;
 }
 
-.center {
+.cityname {
+  display: inline-block;
+  width: 30vw;
+  font-size: 40px;
+  padding: 0.5vw;
+  background-color: lightcyan;
+}
+
+/* .center {
   position: absolute;
   top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 30px;
   font-weight: bold;
-}
+} */
 
 /* select */
 .box {
@@ -106,26 +120,28 @@ table {
   background-color: #0563af;
   color: white;
   padding: 12px;
-  width: 150px;
+  width: 11vw;
   border: none;
   font-size: 20px;
   font-weight: bold;
   box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
   -webkit-appearance: button;
-  appearance: button;
+  appearance: none;
   outline: none;
 }
 
 .box::before {
   content: "\f13a";
-  font-family: FontAwesome;
+  font-family: "Font Awesome 5 Free"; /* here is the correct font-family */
+  font-style: normal;
+  font-weight: 900;
   position: absolute;
   top: 0;
   right: 0;
   width: 20%;
   height: 100%;
   text-align: center;
-  font-size: 28px;
+  font-size: 20px;
   line-height: 45px;
   color: rgba(255, 255, 255, 0.5);
   background-color: rgba(255, 255, 255, 0.1);
@@ -159,4 +175,21 @@ h1 {
 
 .pin:hover {
   fill: lightsalmon;
+}
+
+#my_dataviz {
+  overflow: visible;
+}
+
+div.tooltip {
+  width: 150px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
 }

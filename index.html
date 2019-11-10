@@ -1,26 +1,19 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="allstyles.css" />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    />
+    <meta charset="UTF-8" />
   </head>
   <body>
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <div class="calcontainer">
-      <img
-        id="cal"
-        src="https://cdn2.iconfinder.com/data/icons/date-and-time-flat/64/Calendar_month_date_schedule_blank-512.png"
-      />
-      <div class="center">
-        <div class="box">
-          <select>
-            <option>Option 1</option>
-            <option>Option 2</option>
-            <option>Option 3</option>
-            <option>Option 4</option>
-            <option>Option 5</option>
-          </select>
-        </div>
-      </div>
-    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
 
     <img
       id="rings"
@@ -32,37 +25,62 @@
       👇Click on Olympic cities on the map to start exploring!👇
     </div>
 
-    <div id="column1">
-      <!-- <img id="map" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/world-map-outline-in-gray-color-chokkicx.jpg"> -->
-      <div id="map"></div>
-      <!-- for the bar chart -->
-      <h1>Number of Athletes by Continent</h1>
-      <p>This chart shows the number of atheletes from each continent.</p>
-      <div id="my_dataviz"></div>
+    <div class="row1">
+      <div class="cityname">
+        <u>Hello:)</u>
+        <div class="calcontainer">
+          <!-- <img
+            id="cal"
+            src="https://cdn2.iconfinder.com/data/icons/date-and-time-flat/64/Calendar_month_date_schedule_blank-512.png"
+          /> -->
+          <div class="center">
+            <div class="box">
+              <select class="dd"> </select>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <!-- packed circles -->
-    <div id="column2">
-      <h1>Medals by Country</h1>
-      <p>
-        This chart shows the medals of every participating countries. You can
-        drag multiple countries together to compare their sizes!
-      </p>
-      <svg id="bubbles"></svg>
-      <!--table -->
-      <h1>Top 10 Athletes</h1>
-      <p>This table shows the top 10 athelets that get the most medals.</p>
-      <div id="table"></div>
+
+    <div class="row2">
+      <div id="column1">
+        <!-- <img id="map" src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/world-map-outline-in-gray-color-chokkicx.jpg"> -->
+        <div id="map"></div>
+        <!-- for the bar chart -->
+        <h1>Number of Athletes by Continent</h1>
+        <p>This chart shows the number of atheletes from each continent.</p>
+        <div id="my_dataviz"></div>
+      </div>
+      <!-- packed circles -->
+      <div id="column2">
+        <h1>Medals by Country</h1>
+        <p>
+          This chart shows the medals of every participating countries. You can
+          drag multiple countries together to compare their sizes!
+        </p>
+        <svg id="bubbles"></svg>
+        <!--table -->
+        <h1>Top 10 Athletes</h1>
+        <p>This table shows the top 10 athelets that get the most medals.</p>
+        <div id="table"></div>
+      </div>
     </div>
+
     <script>
       var width = 0.3 * window.innerWidth,
         height = 0.45 * window.innerHeight,
-        sizeDivisor = 1,
+        sizeDivisor = 3,
         nodePadding = 2.5;
 
       var svg = d3
         .select("#bubbles")
         .attr("width", width)
         .attr("height", height);
+      var tooltip = d3
+        .select("body")
+        .append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
 
       var color = d3.scaleOrdinal([
         "#66c2a5",
@@ -100,13 +118,9 @@
         )
         .force("charge", d3.forceManyBody().strength(-15));
 
-      d3.csv("data/fake_data.csv", types, function(error, graph) {
+      d3.csv("data/nation_medal_count.csv", types, drawBub);
+      function drawBub(error, graph) {
         if (error) throw error;
-
-        // sort the nodes so that the bigger ones are at the back
-        graph = graph.sort(function(a, b) {
-          return b.size - a.size;
-        });
 
         //update the simulation based on the data
         simulation
@@ -150,6 +164,32 @@
           .attr("cy", function(d) {
             return d.y;
           })
+
+          .on("mouseover", function(d) {
+            tooltip.style("opacity", 0.9);
+            selected = d3.select(this).data()[0];
+            tooltip
+              .html(selected.team + "<br>" + selected.medals + " medals")
+              .style("left", d3.event.x + "px")
+              .style("top", d3.event.y + "px");
+          })
+          // .on("mousemove", function(d) {
+          //   tooltip
+          //     .transition()
+          //     .duration(100)
+          //     .style("opacity", 0.9);
+          //   selected = d3.select(this).data()[0];
+          //   tooltip
+          //     .html(selected.team + "<br>" + selected.medals + " medals")
+          //     .style("left", d3.event.pageX + "px")
+          //     .style("top", d3.event.pageY - 28 + "px");
+          // })
+          .on("mouseout", function(d) {
+            tooltip.style("opacity", 0);
+          });
+        svg
+          .select("g")
+          .selectAll("circle")
           .call(
             d3
               .drag()
@@ -157,21 +197,7 @@
               .on("drag", dragged)
               .on("end", dragended)
           );
-
-        var label = svg
-          .append("g")
-          .style("font", "100px sans-serif")
-          .style("fill", "black")
-          .attr("pointer-events", "none")
-          .attr("text-anchor", "middle")
-          .selectAll("text")
-          .data(graph)
-          .enter()
-          .append("text")
-          // .style("fill-opacity", d => d.parent === root ? 1 : 0)
-          // .style("display", d => d.parent === root ? "inline" : "none")
-          .text(d => d.team);
-      });
+      }
 
       function dragstarted(d) {
         if (!d3.event.active) simulation.alphaTarget(0.03).restart();
@@ -198,7 +224,7 @@
       }
 
       // -------------------------------------------------TABLE-------------------------------------------------------------
-      d3.csv("data/table_fake_data.csv", function(error, myData) {
+      d3.csv("data/athlete_medal_count_1.csv", function(error, myData) {
         if (error) {
           console.log("Had an error loading file.");
         }
@@ -207,16 +233,16 @@
         myData.forEach(function(d, i) {
           // now we add another data object value, a calculated value.
           // here we are making strings into numbers using type coercion
-          d.rank = +d.rank;
+          // d.rank = +d.rank;
           d.medals = +d.medals;
           // Add a new array with the values of each:
-          myArray.push([d.rank, d.name, d.sex, d.team, d.sport, d.medals]);
+          myArray.push([d.name, d.sex, d.team, d.sport, d.medals]);
         });
-        console.log(myData);
-        console.log(myArray);
+        // console.log(myData);
+        // console.log(myArray);
         //sort data by difference
         myArray.sort(function(a, b) {
-          return a[3] - b[3];
+          return b[4] - a[4];
         });
         // You could also have made the new array with a map function!
         //using colors and fonts from the UNICEF Style Guide
@@ -224,7 +250,7 @@
         var header = table.append("thead").append("tr");
         header
           .selectAll("th")
-          .data(["Rank", "Name", "Sex", "Team", "Sport", "Medals"])
+          .data(["Name", "Sex", "Team", "Sport", "Medals"])
           .enter()
           .append("th")
           .text(function(d) {
@@ -233,7 +259,7 @@
         var tablebody = table.append("tbody");
         rows = tablebody
           .selectAll("tr")
-          .data(myArray)
+          .data(myArray.slice(0, 10))
           .enter()
           .append("tr");
         // We built the rows using the nested array - now each row has its own array.
@@ -241,7 +267,7 @@
           .selectAll("td")
           // each row has data associated; we get it and enter it for the cells.
           .data(function(d) {
-            console.log(d);
+            // console.log(d);
             return d;
           })
           .enter()
@@ -252,24 +278,24 @@
       });
       // -------------------------------------------------BAR CHART-------------------------------------------------------------
       var margin = { top: 10, right: 10, bottom: 50, left: 40 },
-        width = 0.65 * window.innerWidth - margin.left - margin.right,
-        height = 0.35 * window.innerHeight - margin.top - margin.bottom;
+        width3 = 0.65 * window.innerWidth - margin.left - margin.right,
+        height3 = 0.35 * window.innerHeight - margin.top - margin.bottom;
 
       // append the svg object to the body of the page
       var svg2 = d3
         .select("#my_dataviz")
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width3 + margin.left + margin.right)
+        .attr("height", height3 + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
       // Parse the Data
-      d3.csv("data/bar_data1.csv", function(data) {
+      d3.csv("data/attending_athletes.csv", function(data) {
         // X axis
         var x = d3
           .scaleBand()
-          .range([0, width])
+          .range([0, width3])
           .domain(
             data.map(function(d) {
               return d.continent;
@@ -278,7 +304,7 @@
           .padding(0.2);
         svg2
           .append("g")
-          .attr("transform", "translate(0," + height + ")")
+          .attr("transform", "translate(0," + height3 + ")")
           .call(d3.axisBottom(x))
           .selectAll("text")
           .attr("transform", "translate(-10,0)rotate(-45)")
@@ -288,7 +314,7 @@
         var y = d3
           .scaleLinear()
           .domain([0, 5000])
-          .range([height, 0]);
+          .range([height3, 0]);
         svg2.append("g").call(d3.axisLeft(y));
 
         // Bars
@@ -296,7 +322,7 @@
           .selectAll("mybar")
           .data(
             data.filter(function(d) {
-              return d.year == "2008";
+              return d.year == "2016";
             })
           )
           .enter()
@@ -308,7 +334,7 @@
           .attr("fill", "#69b3a2")
           // no bar at the beginning thus:
           .attr("height", function(d) {
-            return height - y(0);
+            return height3 - y(0);
           }) // always equal to 0
           .attr("y", function(d) {
             return y(0);
@@ -323,10 +349,9 @@
             return y(d.num);
           })
           .attr("height", function(d) {
-            return height - y(d.num);
+            return height3 - y(d.num);
           })
           .delay(function(d, i) {
-            console.log(i);
             return i * 100;
           });
       });
